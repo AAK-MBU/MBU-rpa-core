@@ -21,16 +21,18 @@ def test_base_rpa_error():
     3. Pydantic raises ValidationError for invalid input
     """
     # Test that error message is correctly set and returned
-    message = "Test error message"
-    error = BaseRPAError(message=message)
-    assert str(error) == message
-    assert repr(error) == f"BaseRPAError(message={repr(message)})"
+    try:
+        message = "Test error message"
+        raise BaseRPAError(message=message)
+    except BaseRPAError as error:
+        assert str(error) == message
+        assert repr(error) == f"BaseRPAError(message={repr(message)})"
 
     # Test that Pydantic catches invalid input
     with pytest.raises(ValidationError):
-        BaseRPAError(message=123)  # Not a string
+        raise BaseRPAError(message=123)  # Not a string
     with pytest.raises(ValidationError):
-        BaseRPAError(message="")  # Empty string
+        raise BaseRPAError(message="")  # Empty string
 
 
 def test_business_error():
@@ -43,10 +45,12 @@ def test_business_error():
     """
 
     # Test that BusinessError contains the correct message
-    message = "Business error occurred"
-    error = BusinessError(message=message)
-    assert str(error) == message
-    assert repr(error) == f"BusinessError(message={repr(message)})"
+    try:
+        message = "Business error occurred"
+        raise BusinessError(message=message)
+    except BusinessError as error:
+        assert str(error) == message
+        assert repr(error) == f"BusinessError(message={repr(message)})"
 
 
 def test_process_error():
@@ -59,7 +63,9 @@ def test_process_error():
     """
 
     # Test that ProcessError contains the correct message
-    message = "Process error occurred"
-    error = ProcessError(message=message)
-    assert str(error) == message
-    assert repr(error) == f"ProcessError(message={repr(message)})"
+    try:
+        message = "Process error occurred"
+        raise ProcessError(message=message)
+    except ProcessError as error:
+        assert str(error) == message
+        assert repr(error) == f"ProcessError(message={repr(message)})"
