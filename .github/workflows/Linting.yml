@@ -22,6 +22,7 @@ jobs:
         pip install pylint
         pip install flake8
         pip install .
+        pip install .[dev]
 
     - name: Analysing the code with pylint
       run: |
