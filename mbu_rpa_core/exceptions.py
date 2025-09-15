@@ -4,6 +4,7 @@ This module contains custom exception classes for handling different types of
 errors that may occur during RPA processes in the MBU department.
 """
 
+import traceback
 from pydantic import Field
 from pydantic.dataclasses import dataclass
 
@@ -22,12 +23,20 @@ class BaseRPAError(Exception):
         """Return a string representation of the exception."""
         return f"{self.__class__.__name__}(message={repr(self.message)})"
 
+    def __dictinfo__(self):
+        """Return error dict"""
+        return {
+            "type": self.__class__.__name__,
+            "message": str(self),
+            "traceback": traceback.format_exc()
+        }
+
 
 class BusinessError(BaseRPAError):
     """Exception raised for business-related errors in the RPA process."""
 
     def __init__(self, message: str):
-        """Initialize the BusinessError with a message."""
+        """Initialize the BusinessError with a message (required!)."""
         super().__init__(message=message)
 
 
@@ -35,5 +44,5 @@ class ProcessError(BaseRPAError):
     """Exception raised for process-related errors in the RPA process."""
 
     def __init__(self, message: str):
-        """Initialize the ProcessError with a message."""
+        """Initialize the ProcessError with a message (required!)."""
         super().__init__(message=message)
