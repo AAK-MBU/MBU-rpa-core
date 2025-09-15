@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mbu_rpa_core"
-version = "0.2.0"
+version = "0.2.1"
 description = "Core library for RPA processes in AAK-MBU"
 readme = "README.md"
 requires-python = ">=3.8"
