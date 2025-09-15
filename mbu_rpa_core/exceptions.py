@@ -26,7 +26,7 @@ class BaseRPAError(Exception):
     def __dictinfo__(self):
         """Return error dict"""
         return {
-            "type": self.__type__(),
+            "type": self.__class__.__name__,
             "message": str(self),
             "traceback": traceback.format_exc()
         }

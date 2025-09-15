@@ -51,6 +51,9 @@ def test_business_error():
     except BusinessError as error:
         assert str(error) == message
         assert repr(error) == f"BusinessError(message={repr(message)})"
+        error_dict = error.__dictinfo__()
+        assert error_dict["type"] == "BusinessError"
+        assert error_dict["message"] == message
 
 
 def test_process_error():
@@ -69,3 +72,6 @@ def test_process_error():
     except ProcessError as error:
         assert str(error) == message
         assert repr(error) == f"ProcessError(message={repr(message)})"
+        error_dict = error.__dictinfo__()
+        assert error_dict["type"] == "ProcessError"
+        assert error_dict["message"] == message
