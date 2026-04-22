@@ -1,10 +1,10 @@
 [build-system]
-requires = ["setuptools>=42", "wheel"]
+requires = ["setuptools>=82.0.1"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "mbu_rpa_core"
-version = "0.2.4"
+version = "0.2.5"
 description = "Core library for RPA processes in AAK-MBU"
 readme = "README.md"
 requires-python = ">=3.8"
@@ -41,8 +41,9 @@ dev = [
 [project.urls]
 Repository = "https://github.com/AAK-MBU/MBU-rpa-core.git"
 
-[tool.setuptools]
-packages = ["mbu_rpa_core"]
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["mbu_rpa_core*"]
 
 [tool.setuptools.package-data]
 "mbu_rpa_core" = ["py.typed"]
