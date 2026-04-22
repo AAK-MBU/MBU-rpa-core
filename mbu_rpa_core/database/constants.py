@@ -14,6 +14,17 @@ class Constants:
     def add_constant(
         self, constant_name: str, value: str, changed_at: datetime = datetime.now()
     ):
+        """Inserts a new constant into the database.
+
+        Args:
+            constant_name (str): The name of the constant to store.
+            value (str): The value associated with the constant.
+            changed_at (datetime, optional): Timestamp indicating when the constant
+                was last modified. Defaults to the current datetime.
+
+        Returns:
+            None
+        """
         query = """
             INSERT INTO [RPA].[rpa].[Constants] ([name], [value], [changed_at])
             VALUES (?, ?, ?)
@@ -21,6 +32,19 @@ class Constants:
         self.execute_query(query, [constant_name, value, changed_at])
 
     def get_constant(self, constant_name: str) -> dict:
+        """Retrieves a constant from the database by name.
+
+        Args:
+            constant_name (str): The name of the constant to retrieve.
+
+        Returns:
+            dict: A dictionary containing:
+                - constant_name (str): The name of the constant.
+                - value (str): The stored value.
+
+        Raises:
+            ValueError: If no constant with the given name is found.
+        """
         query = """
             SELECT name, value FROM [RPA].[rpa].[Constants] WHERE name = ?
         """
@@ -34,6 +58,21 @@ class Constants:
     def update_constant(
         self, constant_name: str, new_value: str, changed_at: datetime | None = None
     ):
+        """Updates the value of an existing constant in the database.
+
+        Args:
+            constant_name (str): The name of the constant to update.
+            new_value (str): The new value to assign to the constant.
+            changed_at (datetime | None, optional): Timestamp for when the update
+                occurred. Defaults to the current datetime if not provided.
+
+        Returns:
+            None
+
+        Raises:
+            ValueError: If `new_value` is not provided.
+            ValueError: If no constant with the given name exists.
+        """
         if not new_value:
             logger.error("new_value must be provided")
             raise ValueError("new_value must be provided")
@@ -63,6 +102,18 @@ class Constants:
         password: str,
         changed_at: datetime = datetime.now(),
     ):
+        """Stores a new credential in the database with an encrypted password.
+
+        Args:
+            credential_name (str): The identifier for the credential.
+            username (str): The username associated with the credential.
+            password (str): The plaintext password to encrypt and store.
+            changed_at (datetime, optional): Timestamp indicating when the credential
+                was last modified. Defaults to the current datetime.
+
+        Returns:
+            None
+        """
         encryptor = Encryptor()
         encrypted_password = encryptor.encrypt(password)
         query = """
@@ -74,6 +125,20 @@ class Constants:
         )
 
     def get_credential(self, credential_name: str) -> dict:
+        """Retrieves a credential from the database and decrypts its password.
+
+        Args:
+            credential_name (str): The name of the credential to retrieve.
+
+        Returns:
+            dict: A dictionary containing:
+                - username (str): The stored username.
+                - decrypted_password (str): The decrypted password.
+                - encrypted_password (bytes): The encrypted password as stored.
+
+        Raises:
+            ValueError: If no credential with the given name is found.
+        """
         encryptor = Encryptor()
         query = """
             SELECT username, CAST(password AS varbinary(max))
@@ -99,6 +164,24 @@ class Constants:
         new_password: str | None = None,
         changed_at: datetime | None = None,
     ):
+        """Updates an existing credential's username and/or password.
+
+        Args:
+            credential_name (str): The name of the credential to update.
+            new_username (str | None, optional): The new username. If not provided,
+                the username remains unchanged.
+            new_password (str | None, optional): The new password. If provided,
+                it will be encrypted before storing.
+            changed_at (datetime | None, optional): Timestamp indicating when the
+                update occurred. Defaults to the current datetime if not provided.
+
+        Returns:
+            None
+
+        Raises:
+            ValueError: If neither `new_username` nor `new_password` is provided.
+            ValueError: If no credential with the given name exists.
+        """
         if not new_username and not new_password:
             logger.error(
                 "At least one of new_username or new_password must be provided"

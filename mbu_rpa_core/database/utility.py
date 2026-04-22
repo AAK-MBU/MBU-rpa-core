@@ -1,12 +1,15 @@
 """This module handles general database connection and calls"""
 
 import json
+import logging
 import os
 from typing import Any, Dict, Tuple, Union
 
 import pyodbc
 from dateutil import parser
 from dotenv import load_dotenv
+
+logger = logging.getLogger(__name__)
 
 
 class Utility:
@@ -35,7 +38,7 @@ class Utility:
             if is_select:
                 rows = self.cursor.fetchall()
                 if len(rows) == 0:
-                    print("No results from query")
+                    logger.info("No results from query")
                     return None
                 if return_dict:
                     columns = [column[0] for column in self.cursor.description]
@@ -43,11 +46,10 @@ class Utility:
                 else:
                     res = rows
                 return res
-            else:
-                return None
+            return None
         except pyodbc.Error as e:
-            print(e)
-            print(query)
+            logger.error("Database error executing query: %s", e)
+            logger.error("Failed query: %s", query)
             raise e
 
     def fetch_env(self, db_env):
@@ -117,10 +119,23 @@ class Utility:
             result["success"] = True
             result["rows_updated"] = rows_updated.rowcount
         except pyodbc.Error as e:
+            logger.error(
+                "Database error executing stored procedure '%s': %s",
+                stored_procedure,
+                e,
+            )
             result["error_message"] = f"Database error: {str(e)}"
         except ValueError as e:
+            logger.error(
+                "Value error executing stored procedure '%s': %s", stored_procedure, e
+            )
             result["error_message"] = f"Value error: {str(e)}"
         except Exception as e:
+            logger.error(
+                "Unexpected error executing stored procedure '%s': %s",
+                stored_procedure,
+                e,
+            )
             result["error_message"] = f"An unexpected error occurred: {str(e)}"
 
         return result
